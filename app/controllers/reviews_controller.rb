@@ -1,3 +1,5 @@
+require_relative '../models/restaurant.rb'
+
 class ReviewsController < ApplicationController
 
   def new
@@ -6,8 +8,9 @@ class ReviewsController < ApplicationController
   end
 
   def create
-    @restaurant = Restaurant.find(review_params[:restaurant_id])
-    @review = @restaurant.build_review(review_params, current_user)
+    @restaurant = Restaurant.find(params[:restaurant_id])
+    @review = Restaurant.build_with_user(review_params, current_user)
+    # @restaurant.build_review(review_params, current_user)
 
     if @review.save
       redirect_to restaurants_path
@@ -28,7 +31,7 @@ class ReviewsController < ApplicationController
 
   def build_review(review_params, current_user)
     if !current_user.reviewed_restaurants.include? @restaurant
-      @review = @restaurant.reviews.new(review_params)
+      @review = reviews.build(review_params)
       @review.save
     end
   end
